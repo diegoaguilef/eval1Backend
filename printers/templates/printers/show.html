@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1 class="text-center">Printer Details</h1>
+    <div class="row">
+        <div class="col">
+            <p>Name: {{ printer.name }}</p>
+            <p>Description: {{ printer.description }}</p>
+            <p>Brand: {{ printer.brand }}</p>
+            <p>Serial Number: {{ printer.serial_number }}</p>
+            <p>Wifi: {{ printer.is_wifi }}</p>
+            <p>Stock: {{ printer.stock }}</p>
+            <p>Price: {{ printer.price }}</p>
+            <p>Created At: {{ printer.created_at }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <a href="/printers" class="btn btn-primary">Printers List</a>
+    </div>
+{% endblock content %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <a href="/printers/new" class="btn btn-primary">New printer</a>
+        </div>
+        <div class="row col-12">
+            <table class="table table-striped table-primary">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Serial Number</th>
+                        <th>Brand</th>
+                        <th>Is Wifi</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for printer in printers %}
+                        <tr>
+                            <td>{{ printer.id }}</td>
+                            <td>{{ printer.name }}</td>
+                            <td>{{ printer.description }}</td>
+                            <td>{{ printer.serial_number }}</td>
+                            <td>{{ printer.brand }}</td>
+                            <td>{{ printer.is_wifi }}</td>
+                            <td>{{ printer.price }}</td>
+                            <td>{{ printer.stock }}</td>
+                            <td>{{ printer.created_at }}</td>
+                            <td>
+                                <a href="/printers/{{printer.id}}" class="btn btn-sm btn-primary">Show</a>
+                                <a href="/printers/{{printer.id}}/edit" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="/printers/{{printer.id}}/destroy" 
+                                    onclick="return confirm('Are you sure you want to delete this item?');" 
+                                    class="btn btn-sm btn-danger">Destroy</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}
