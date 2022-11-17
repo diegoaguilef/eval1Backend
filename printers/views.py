@@ -97,3 +97,4 @@ def destroy(req, printer_id):
 
     context = { 'printers': printers }
     return render(req, 'printers/index.html', context)
+    

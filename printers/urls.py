@@ -1,9 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.contrib import admin
+from django.conf.urls.static import static
 from . import views 
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('new/', views.new, name='new'),
+    path('users/', include('users.urls')),
     path('<str:printer_id>/edit/', views.edit, name='edit'),
     path('create', views.create, name='create'),
     path('<int:printer_id>/', views.show, name='show'),
