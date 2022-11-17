@@ -20,6 +20,13 @@ def index(req):
     context = { 'printers': printers }
     return render(req, 'printers/index.html', context)
 
+def home(req):
+    context = { 'printers': printers }
+    return render(req, 'home.html', context)
+
+def whoweare(req):
+    return render(req, 'whoweare.html')
+
 def new(req):
     form = PrinterForm()
     printer = req.POST
