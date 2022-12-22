@@ -66,3 +66,63 @@ def profile(request):
         print(SessionView.as_view())
         #return render(request, "sign_in.html", {"form": SignInForm})
         return HttpResponseRedirect('sign_in')
+
+def index(req):
+    context = { 'users': users }
+    return render(req, 'users/index.html', context)
+
+def home(req):
+    context = { 'user': users }
+    return render(req, 'home.html', context)
+
+
+def new(req):
+    form = UserForm()
+    user = req.POST
+    return render(req, 'users/new.html', {'form': form})
+
+def edit(req, user_id):
+    user = None
+    for p in users:
+        if str(p.id) == str(user_id):
+            user = p
+
+    form = UserForm(initial={
+        'name': user.name})
+    
+    return render(req, 'users/edit.html', {'form': form, 'id': user_id})
+
+def show(req, user_id):
+    user = User.objects.get(pk=user_id)
+    context = { 'user': user }
+    return render(req, 'user/show.html', context)
+
+def create(req):
+    form = UserForm(req.POST)
+    
+    name = req.POST.get('name')
+    created_at = req.POST.get('created_at')
+
+    if form.is_valid():
+        user = User(len(users) + 1, name, created_at)
+        users.append(user)
+        return render(req, 'users/show.html', {'form': form, 'user': user})
+    else:
+        return render(req, 'users/new.html', {'form': form})
+
+def update(req, user_id):
+    user = user.objects.get(pk=user_id)
+    form = UserForm(req.POST, req.FILES, instance=user)
+    if form.is_valid():
+        form.save()
+        return render(req, 'users/show.html', {'form': form, 'id': user_id, 'user': user})
+    else:
+        return render(req, 'users/edit.html', {'form': form, 'id': user_id})
+
+def destroy(req, user_id):
+    for user in users:
+        if user.id == user_id:
+            users.remove(user)
+
+    context = { 'users': users }
+    return render(req, 'users/index.html', context)

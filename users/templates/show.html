@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h1 class="text-center">Usuario</h1>
+        <div class="row">
+            <div class="col">
+                <p>Name: {{ user.name }}</p>
+                <p>Created At: {{ user.created_at }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <a href="{% url 'users' %}" class="btn btn-primary">users List</a>
+        </div>
+    </div>
+{% endblock content %}

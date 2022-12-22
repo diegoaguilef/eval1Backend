@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <form class="form-horizontal" action="/printers/create" method="post">
+        {% csrf_token %}
+        <div class="row col-3">
+        {{ form }}
+        </div>
+        <div class="row col-3 mt-3">
+            <input type="submit" value="create" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+<div class="row">
+    <a href="/users/index" class="btn btn-primary">Printers List</a>
+</div>    
+{% endblock content %}

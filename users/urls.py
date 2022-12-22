@@ -3,6 +3,7 @@ from django.urls import path,include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from .views import SessionView, RegistrationView, profile
+from . import views
 
 
 urlpatterns = [
@@ -11,5 +12,11 @@ urlpatterns = [
    path('sign_out', SessionView.as_view(), name = "sign_out"),
    path('sign_up', RegistrationView.as_view(), name= "sign_up"),
    path('profile',profile, name = "profile"),
-
+   path('', views.index, name='users'),
+   path('new/', views.new, name='new_user'),
+   path('<str:user_id>/edit/', views.edit, name='edit_user'),
+   path('create', views.create, name='create_user'),
+   path('<int:user_id>/', views.show, name='show_user'),
+   path('<int:user_id>/update/', views.update, name='update_user'),
+   path('<int:user_id>/destroy/', views.destroy, name='destroy_user'),
 ]  
