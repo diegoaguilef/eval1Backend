@@ -1,74 +1,19 @@
 from django.db import models
 
 # Create your models here.
-class Printer():
-    _name = ""
-    def __init__(self, id=None, name="", description="",  serial_number="", brand="", is_wifi=False, price=0, stock=0,created_at=None):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.serial_number = serial_number
-        self.brand = brand
-        self.is_wifi = is_wifi
-        self.price = price
-        self.stock = stock
-        self.created_at = created_at
-
-    def getName():
-        return self.name
-    
-    def setName(name):
-        self.name = name
-
-    def getId():
-        return self.id
-        
-    def setId(id):
-        self.id = id
-
-    def getDescription():
-        return self.description
-
-    def setDescription(description):
-        self.description = description
-
-    def getSerialNumber():
-        return self.serial_number
-
-    def setSerialNumber(serial_number):
-        self.serial_number = serial_number
-
-    def getBrand():
-        return self.brand
-
-    def setBrand(brand):
-        self.brand = brand
-
-    def getIsWifi():
-        return self.is_wifi
-
-    def setIsWifi(is_wifi):
-        self.is_wifi = is_wifi
-    
-    def getPrice():
-        return self.price
-
-    def setPrice(price):
-        self.price = price
-
-    def getStock():
-        return self.stock
-
-    def setStock(stock):
-        self.stock = stock
-
-    def getCreatedAt():
-        return self.created_at
-
-    def setCreatedAt(created_at):
-        self.created_at = created_at
+class Printer(models.Model):
+    BRANDS = [['hp', 'HP'], ['brother', 'Brother'],['cannon', 'Cannon'], ['lg', 'LG'], ['samsung', 'Samsung']]
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    serial_number = models.TextField()
+    brand = models.CharField(max_length=20, choices=BRANDS)
+    is_wifi = models.BooleanField(default=False)
+    price = models.IntegerField()
+    stock = models.IntegerField()
+    created_at = models.DateTimeField()
+    image = models.ImageField(default=None, null=True, upload_to='printer_images')
 
     def __str__(self):
         return 'Impresora: %s, Description: %s, Serial: %s, Brand: %s, is_wifi: %s, Price: %s, Stock: %s, Created: %s'%(
             self.name, self.description, self.serial_number, self.brand, self.is_wifi, self.price, self.stock, self.created_at)
-

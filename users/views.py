@@ -1,57 +1,68 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.views.generic import View
-from django.contrib.auth import login, logout, authenticate
-from django.contrib import messages
+from django.views.generic.base import View
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-
+from .models import User
+from .forms import SignInForm, RegisterForm
+from django.urls import reverse
 
 # Create your views here.
-class VRegistro(View):
-    
+class SessionView(View):
+    template_name = "sign_in.html"
+
     def get(self, request):
+        context = { 'form': SignInForm()}
         if request.session.get("_auth_user_id"):
-            return redirect('/printers')
-        else:
-            return render(request,'register.html', {'form': UserCreationForm})
+            return redirect("/printers")
+
+        return render(request, self.template_name, context)
 
     def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=True)
-            
-            return redirect('/printers')
-        
+        form = SignInForm(request.POST)
+        email = form.data.get("email")
+        password = form.data.get("password")
+        user = User.objects.get(email=email, password=password)
+        if form.is_valid() and user is not None:
+            request.session["_auth_user"] = user.id
+            return redirect("/")
         else:
-            for msg in form.error_messages:
-                 messages.error(request, form.error_messages[msg])
-            
-            return render(request,'register.html', {'form': form})
+            print(form.errors)
+            return render(request, "sign_in.html", {"form": form})
 
-def cerrar_session(request):
-    logout(request)
-    return redirect('login')
+    def delete(self, request):
+        if request.session.get("_auth_user"):
+            request.session.pop("_auth_user")
+            return redirect("/")
 
-def sign_in(request):
-    if request.session.get("_auth_user_id"):
-        return redirect('/printers')
+
+class RegistrationView(View):
+    template_name = "register.html"
+
+    def get(self, request):
+        context = { 'form': RegisterForm()}
+        if request.session.get("_auth_user_id"):
+            return redirect("/printers")
+
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = User.objects.filter(email=form.cleaned_data["email"])
+            return redirect("/printers")
+        else:
+            return render(request, "register.html", {"form": form})
+
+
+def profile(request):
+    user_id = request.session.get("_auth_user")
+    if user_id:
+        user = User.objects.get(pk=user_id)
+        context = {"user": user}
+        return render(request, "profile.html", context)
     else:
-        if request.method == 'POST':
-            form = AuthenticationForm(request, data=request.POST)
-            if form.is_valid():
-                nombre_usuario = form.cleaned_data.get("username")
-                contraseña = form.cleaned_data.get("password")
-                usuario = authenticate(request, username = nombre_usuario, password = contraseña)
-                if usuario is not None:
-                    login(request, usuario)
-                    return redirect('/printers')
-                else:
-                    messages.error(request, messages,"Usuario inexistente")
-            else:
-                messages.error(request, messages,"Informacion incorrecta")
-        return render(request,'registration/login.html', {'form': AuthenticationForm})
-
-
-
-            
-
-
+        print(SessionView.as_view())
+        #return render(request, "sign_in.html", {"form": SignInForm})
+        return HttpResponseRedirect('sign_in')

@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1 class="text-center">Printer Details</h1>
-    <div class="row">
-        <div class="col">
-            <p>Name: {{ printer.name }}</p>
-            <p>Description: {{ printer.description }}</p>
-            <p>Brand: {{ printer.brand }}</p>
-            <p>Serial Number: {{ printer.serial_number }}</p>
-            <p>Wifi: {{ printer.is_wifi }}</p>
-            <p>Stock: {{ printer.stock }}</p>
-            <p>Price: {{ printer.price }}</p>
-            <p>Created At: {{ printer.created_at }}</p>
+    <div class="container">
+        <h1 class="text-center">Impresora</h1>
+        <div class="row">
+            <div class="col">
+                <p>Name: {{ printer.name }}</p>
+                <p>Description: {{ printer.description }}</p>
+                <p>Brand: {{ printer.brand }}</p>
+                <p>Serial Number: {{ printer.serial_number }}</p>
+                <p>Wifi: {{ printer.is_wifi }}</p>
+                <p>Stock: {{ printer.stock }}</p>
+                <p>Price: {{ printer.price }}</p>
+                <p>Created At: {{ printer.created_at }}</p>
+                {% if printer.image %}
+                    <p>
+                        <img src="{{ printer.image.url }}"
+                             width="100"
+                             height="200"
+                             alt="printer image"/>
+                    </p>
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <a href="/printers/index" class="btn btn-primary">Printers List</a>
+        <div class="row">
+            <a href="{% url 'printers' %}" class="btn btn-primary">Printers List</a>
+        </div>
     </div>
 {% endblock content %}

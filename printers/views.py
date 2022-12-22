@@ -24,8 +24,6 @@ def home(req):
     context = { 'printers': printers }
     return render(req, 'home.html', context)
 
-def whoweare(req):
-    return render(req, 'whoweare.html')
 
 def new(req):
     form = PrinterForm()
@@ -50,11 +48,7 @@ def edit(req, printer_id):
     return render(req, 'printers/edit.html', {'form': form, 'id': printer_id})
 
 def show(req, printer_id):
-    printer = None
-    for p in printers:
-        if str(p.id) == str(printer_id):
-            printer = p
-    
+    printer = Printer.objects.get(pk=printer_id)
     context = { 'printer': printer }
     return render(req, 'printers/show.html', context)
 
@@ -78,21 +72,10 @@ def create(req):
         return render(req, 'printers/new.html', {'form': form})
 
 def update(req, printer_id):
-    form = PrinterForm(req.POST)
-    
-    name = req.POST.get('name')
-    description = req.POST.get('description')
-    is_wifi = req.POST.get('is_wifi')
-    brand = req.POST.get('brand')
-    serial_number = req.POST.get('serial_number')
-    price = req.POST.get('price')
-    stock = req.POST.get('stock')
-    created_at = req.POST.get('created_at')
+    printer = Printer.objects.get(pk=printer_id)
+    form = PrinterForm(req.POST, req.FILES, instance=printer)
     if form.is_valid():
-        printer = Printer(printer_id, name, description,serial_number, brand,is_wifi, price, stock, created_at)
-        for i in range(len(printers)):
-            if printers[i].id == printer_id:
-                printers[i] = printer
+        form.save()
         return render(req, 'printers/show.html', {'form': form, 'id': printer_id, 'printer': printer})
     else:
         return render(req, 'printers/edit.html', {'form': form, 'id': printer_id})

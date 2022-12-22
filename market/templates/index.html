@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row row-cols-3">
+            {% for printer in printers %}
+            <div class="col h-100">
+                    <div class="card" style="width: 18rem;">
+                        {% if printer.image %}
+                        <img src="{{ printer.image.url }}" class="card-img-top" alt="Imagen producto">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ printer.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ printer.brand }}</h6>
+                            <p class="card-text">{{ printer.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <p class="fw-semibold">Stock: {{ printer.stock }}</p>
+                            <p class="fw-semibold">Precio: {{ printer.price }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{% url 'product_detail' printer.id %}" class="btn btn-success">Ver producto </a>
+                        </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h1 class="text-center">Detalle de prodcuto</h1>
+        <div class="row">
+            <div class="col-6">
+                {% if printer.image %}
+                    <p>
+                        <img src="{{ printer.image.url }}" alt="printer image"/>
+                    </p>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="d-flex flex-column">
+                    <div class="row">
+                        <p>Name: {{ printer.name }}</p>
+                        <p>Description: {{ printer.description }}</p>
+                        <p>Brand: {{ printer.brand }}</p>
+                        <p>Serial Number: {{ printer.serial_number }}</p>
+                        <p>Wifi: {{ printer.is_wifi }}</p>
+                        <p>Stock: {{ printer.stock }}</p>
+                        <p>Price: {{ printer.price }}</p>
+                    </div>
+                </div>
+                <p class="fs-4">Cantidad:</p>
+                <div class="d-flex flex-row">
+                    <button id="minus">
+                        <i class="fa fa-circle-minus"></i>
+                    </button>
+                    <label id="cart_quantity" class="px-2 fs-4">1</label>
+                    <button id="plus">
+                        <i class="fa fa-circle-plus"></i>
+                    </button>
+                </div>
+                <button value="1" id="add_to_cart" class="btn btn-success">
+                    Agregar al carrito de compras <i class="fa-solid fa-cart-plus"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row col-2">
+        <a href="{% url 'home' %}" class="btn btn-primary">Inicio</a>
+    </div>
+    <script>
+        $(function() {
+          const stock = {{ printer.stock }}
+          $("#minus").click(function() {
+            let quantity = $("#add_to_cart").val();
+            if(quantity > 0){
+              quantity --;
+              $("#add_to_cart").val(quantity)
+              $("#cart_quantity").text(quantity);
+            }
+        
+          })
+          $("#plus").click(function() {
+            let quantity = $("#add_to_cart").val();
+            if(quantity >= 0 && quantity < stock){
+              quantity ++;
+              $("#add_to_cart").val(quantity)
+              $("#cart_quantity").text(quantity);
+            }
+        
+          });
+          if(stock <= 0) $("#add_to_cart").attr("disabled", "disabled");
+        
+          $("#add_to_cart").click(function() {
+            const quantity = $(this).val();
+            const product_id = {{ printer.id }}
+            $.get("/market/add_cart_product?quantity=" + quantity + "&product_id="+ product_id, function(data) {
+              window.location.href = "/market/shopping_cart?id=" + product_id
+            })
+          })
+        })
+        </script>
+{% endblock content %}
