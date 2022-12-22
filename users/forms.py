@@ -28,5 +28,8 @@ class UserForm(forms.ModelForm):
         exclude = ('id',)
         widgets = {
             'name': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Nombre'}),
-            'created_at': forms.DateTimeInput(attrs = {'class': 'form-control', 'placeholder': 'Fecha creación'}),
+            'last_name': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Apellido'}),
+            'email': forms.EmailInput(attrs = {'class': 'form-control', 'placeholder': 'Email'}),
+            'password': forms.PasswordInput(attrs = {'class': 'form-control', 'placeholder': 'Password'}),
+            'role': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'rol'}),
         }        

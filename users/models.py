@@ -8,3 +8,6 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=25)
     role = models.CharField(max_length=25)
+
+    def get_full_name(self):
+        return "%s %s" % (self.name, self.last_name)

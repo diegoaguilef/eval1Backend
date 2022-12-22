@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-    <form enctype="multipart/form-data" class="form-horizontal" action="{% url 'update_users' id %}" method="post">
+    <form enctype="multipart/form-data" class="form-horizontal" action="{% url 'update_user' id %}" method="post">
         {% csrf_token %}
         <div class="row col-3">
         {{ form }}
@@ -13,6 +13,6 @@
     </form>
 </div>
 <div class="row">
-    <a href="{% url 'printers' %}" class="btn btn-primary">Printers List</a>
+    <a href="{% url 'users' %}" class="btn btn-primary">Lista Usuarios</a>
 </div>    
 {% endblock content %}

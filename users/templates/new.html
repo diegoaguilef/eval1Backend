@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-    <form class="form-horizontal" action="/printers/create" method="post">
+    <form class="form-horizontal" action="{% url 'create_user' %}" method="post">
         {% csrf_token %}
         <div class="row col-3">
         {{ form }}
@@ -13,6 +13,6 @@
     </form>
 </div>
 <div class="row">
-    <a href="/users/index" class="btn btn-primary">Printers List</a>
+    <a href="{% url 'users' %}" class="btn btn-primary">Lista Usuarios</a>
 </div>    
 {% endblock content %}

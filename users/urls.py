@@ -9,7 +9,7 @@ from . import views
 urlpatterns = [
    path('accounts/', include('django.contrib.auth.urls')),
    path('sign_in', SessionView.as_view(), name = "sign_in"),
-   path('sign_out', SessionView.as_view(), name = "sign_out"),
+   path('sign_out', views.sign_out, name = "sign_out"),
    path('sign_up', RegistrationView.as_view(), name= "sign_up"),
    path('profile',profile, name = "profile"),
    path('', views.index, name='users'),

@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.redirects',
     'printers.apps.PrinterConfig',
-    'users',
-    'market'
+    'users.apps.UsersConfig',
+    'market.apps.MarketConfig',
 ]
 
 MIDDLEWARE = [
@@ -140,3 +140,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+SESSION_ENGINE = 'users.session'

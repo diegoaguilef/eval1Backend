@@ -7,50 +7,27 @@ from django.contrib.sessions.base_session import AbstractBaseSession
 from django.db import models
 from django.views.generic.detail import DetailView
 
-class CustomSession(AbstractBaseSession):
-    account_id = models.IntegerField(null=True, db_index=True)
-    name = models.TextField(null=True)
-    role = models.TextField(null=True)
-
-    @classmethod
-    def get_session_store_class(cls):
-        return DBStore
-
-class SessionStore(DBStore):
-    @classmethod
-    def get_model_class(cls):
-        return CustomSession
-
-    def create_model_instance(self, data):
-        obj = super().create_model_instance(data)
-        try:
-            account_id = int(data.get('_auth_user'))
-            print(data.items())
-            print("Session")
-        except (ValueError, TypeError):
-            account_id = None
-        obj.account_id = account_id
-        if account_id is not None:
-            user = User.objects.get(pk=account_id)
-            obj.name = user.get_full_name()
-            obj.role = user.get_role_name()
-        return obj
+from users.session import SessionStore
 
 # Create your views here.   
 def index(req):
+    user = User.objects.get(pk=req.session.get('_auth_user_id'))
     printers = Printer.objects.all()
-    context= {'printers': printers, 'role': req.session.get('role'), 'name': req.session.get('name'), 'account_id': req.session.get('account_id')}
-    return render(req, 'index.html', context)
+    context= {'printers': printers, 'user': user}
+    print(user.role)
+    return render(req, 'home.html', context)
 
 def whoweare(req):
-    return render(req, 'whoweare.html')
+    user = User.objects.get(pk=req.session.get('_auth_user_id'))
+    context = {'user': user}
+    return render(req, 'whoweare.html', context)
 
-def add_to_cart(req, product_id, quantity): 
-    user_id = req.session.get('_user_auth')
-    user = User.objects.get(pk=user_id)
-    shopping_cart = ShoppingCart(product_id=product_id, user_id=user_id, quantity=quantity)
+def add_to_cart(req, product_id, quantity):
+    user = User.objects.get(pk=req.session.get('_auth_user_id'))
+
+    shopping_cart = ShoppingCart(product_id=product_id, user_id=user.id, quantity=quantity)
     shopping_cart.save()
-    shopping_carts = ShoppingCart.objects.filter(user_id=user_id)
+    shopping_carts = ShoppingCart.objects.get(user_id=user.id)
     return render(req, 'shopping_cart.html', {'shopping_carts': shopping_carts})
 
 class ArticleDetailView(DetailView):

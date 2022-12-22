@@ -3,8 +3,10 @@ from django.shortcuts import render, redirect
 from django.views.generic.base import View
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
+from users.session import SessionStore
 from .models import User
-from .forms import SignInForm, RegisterForm
+from .forms import SignInForm, RegisterForm, UserForm
 from django.urls import reverse
 
 # Create your views here.
@@ -13,6 +15,7 @@ class SessionView(View):
 
     def get(self, request):
         context = { 'form': SignInForm()}
+        print(request.session.get("_auth_user_id"))
         if request.session.get("_auth_user_id"):
             return redirect("/printers")
 
@@ -20,20 +23,18 @@ class SessionView(View):
 
     def post(self, request):
         form = SignInForm(request.POST)
-        email = form.data.get("email")
-        password = form.data.get("password")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
         user = User.objects.get(email=email, password=password)
-        if form.is_valid() and user is not None:
-            request.session["_auth_user"] = user.id
+        if user is not None:
+            s = SessionStore()
+            s['_auth_user_id'] = user.id
+            request.session["_auth_user_id"] = user.id
+            s.save()
+            s.create()
             return redirect("/")
         else:
-            print(form.errors)
             return render(request, "sign_in.html", {"form": form})
-
-    def delete(self, request):
-        if request.session.get("_auth_user"):
-            request.session.pop("_auth_user")
-            return redirect("/")
 
 
 class RegistrationView(View):
@@ -68,29 +69,20 @@ def profile(request):
         return HttpResponseRedirect('sign_in')
 
 def index(req):
+    users = User.objects.all()
     context = { 'users': users }
-    return render(req, 'users/index.html', context)
-
-def home(req):
-    context = { 'user': users }
-    return render(req, 'home.html', context)
+    return render(req, 'index.html', context)
 
 
 def new(req):
     form = UserForm()
     user = req.POST
-    return render(req, 'users/new.html', {'form': form})
+    return render(req, 'new.html', {'form': form})
 
 def edit(req, user_id):
-    user = None
-    for p in users:
-        if str(p.id) == str(user_id):
-            user = p
-
-    form = UserForm(initial={
-        'name': user.name})
-    
-    return render(req, 'users/edit.html', {'form': form, 'id': user_id})
+    user = User.objects.get(pk=user_id)
+    form = UserForm(instance=user)
+    return render(req, 'edit.html', {'form': form, 'id': user_id})
 
 def show(req, user_id):
     user = User.objects.get(pk=user_id)
@@ -99,25 +91,21 @@ def show(req, user_id):
 
 def create(req):
     form = UserForm(req.POST)
-    
-    name = req.POST.get('name')
-    created_at = req.POST.get('created_at')
-
-    if form.is_valid():
-        user = User(len(users) + 1, name, created_at)
-        users.append(user)
-        return render(req, 'users/show.html', {'form': form, 'user': user})
-    else:
-        return render(req, 'users/new.html', {'form': form})
-
-def update(req, user_id):
-    user = user.objects.get(pk=user_id)
-    form = UserForm(req.POST, req.FILES, instance=user)
     if form.is_valid():
         form.save()
-        return render(req, 'users/show.html', {'form': form, 'id': user_id, 'user': user})
+        return redirect('users')
     else:
-        return render(req, 'users/edit.html', {'form': form, 'id': user_id})
+        return render(req, 'new.html', {'form': form})
+
+def update(req, user_id):
+    user = User.objects.get(pk=user_id)
+    form = UserForm(req.POST, instance=user)
+    if form.is_valid():
+        form.save()
+        return redirect("/users")
+    else:
+        print(form.errors)
+        return render(req, 'edit.html', {'form': form, 'id': user_id})
 
 def destroy(req, user_id):
     for user in users:
@@ -126,3 +114,11 @@ def destroy(req, user_id):
 
     context = { 'users': users }
     return render(req, 'users/index.html', context)
+
+def sign_out(req):
+    print("cerrando sesion")
+    if req.session.get("_auth_user_id"):
+        req.session.flush()
+        return redirect("home")
+
+    return redirect("home")
