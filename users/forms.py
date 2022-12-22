@@ -20,3 +20,13 @@ class RegisterForm(forms.ModelForm):
             "email": forms.TextInput(attrs={"class": "form-control", 'placeholder': 'Email'}),
             "password": forms.PasswordInput(attrs={"class": "form-control", 'placeholder': 'Password'}),
         }
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
+        exclude = ('id',)
+        widgets = {
+            'name': forms.TextInput(attrs = {'class': 'form-control', 'placeholder': 'Nombre'}),
+            'created_at': forms.DateTimeInput(attrs = {'class': 'form-control', 'placeholder': 'Fecha creación'}),
+        }        

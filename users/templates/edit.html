@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <form enctype="multipart/form-data" class="form-horizontal" action="{% url 'update_users' id %}" method="post">
+        {% csrf_token %}
+        <div class="row col-3">
+        {{ form }}
+        </div>
+        <div class="row col-3 mt-3">
+            <input type="submit" value="Update" class="btn btn-primary" />
+        </div>
+    </form>
+</div>
+<div class="row">
+    <a href="{% url 'printers' %}" class="btn btn-primary">Printers List</a>
+</div>    
+{% endblock content %}
