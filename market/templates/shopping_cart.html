@@ -1,0 +1,62 @@
+<div class="container">
+    <h1>Mis compras</h1>
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Sub Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% total = 0%>
+                    <% @cart_products.each do |cart_product| %>
+                    <tr>
+                        <td>
+                            <%= cart_product.product.name %>
+                        </td>
+                        <td>
+                            <%= cart_product.product.description %>
+                        </td>
+                        <td>
+                            <i class="fa fa-circle-minus"></i>
+                            <label class="px-2">
+                                <%= cart_product.quantity %>
+                            </label>
+                            <i class="fa fa-circle-plus"></i>
+                        </td>
+                        <td>
+                            <%= cart_product.product.price %>
+                        </td>
+                        <td>
+                            <%= cart_product.quantity * cart_product.product.price %>
+                        </td>
+                        <td>
+                            <%= link_to "<i class='fa-solid fa-trash-can'></i>".html_safe, market_remove_cart_product_path(id: cart_product.id), method: :delete %>
+                        </td>
+                    </tr>
+                    <% total += cart_product.quantity * cart_product.product.price %>
+                    <% end %>
+                </tbody>
+            </table>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>Total :</td>
+                        <td>
+                            <%= total %>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

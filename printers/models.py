@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 # Create your models here.
 class Printer(models.Model):
@@ -17,3 +18,29 @@ class Printer(models.Model):
     def __str__(self):
         return 'Impresora: %s, Description: %s, Serial: %s, Brand: %s, is_wifi: %s, Price: %s, Stock: %s, Created: %s'%(
             self.name, self.description, self.serial_number, self.brand, self.is_wifi, self.price, self.stock, self.created_at)
+
+class ShoppingCart(models.Model):
+    id = models.IntegerField(primary_key=True)
+    quantity = models.IntegerField()
+    printer = models.ForeignKey(
+        Printer,
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
+
+
+#class Sale(models.Model):
+#    id = models.IntegerField(primary_key=True)
+#    user = models.ForeignKey(
+#        'users.User',
+#        on_delete=models.CASCADE,
+##        related_name='sold_items',
+ #   )
+ #   shopping_cart = models.ForeignKey(
+ #       'ShoppingCart',
+ #       on_delete=models.CASCADE,
+ #   )
+ #   invoice = models.TextField(unique=True)

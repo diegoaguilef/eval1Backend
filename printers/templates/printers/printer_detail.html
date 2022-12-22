@@ -67,8 +67,8 @@
           $("#add_to_cart").click(function() {
             const quantity = $(this).val();
             const product_id = {{ printer.id }}
-            $.get("/market/add_cart_product?quantity=" + quantity + "&product_id="+ product_id, function(data) {
-              window.location.href = "/market/shopping_cart?id=" + product_id
+            $.get("/add_to_cart?quantity=" + quantity + "&product_id="+ product_id, function(data) {
+              window.location.href = {% url 'shoppiong_cart' %}
             })
           })
         })

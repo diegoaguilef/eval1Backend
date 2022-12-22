@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from printers.models import Printer
+from printers.models import Printer, ShoppingCart
 from users.models import User
 from django.contrib.sessions.backends.db import SessionStore as DBStore
 from django.contrib.sessions.base_session import AbstractBaseSession
@@ -45,6 +45,14 @@ def index(req):
 def whoweare(req):
     return render(req, 'whoweare.html')
 
+def add_to_cart(req, product_id, quantity): 
+    user_id = req.session.get('_user_auth')
+    user = User.objects.get(pk=user_id)
+    shopping_cart = ShoppingCart(product_id=product_id, user_id=user_id, quantity=quantity)
+    shopping_cart.save()
+    shopping_carts = ShoppingCart.objects.filter(user_id=user_id)
+    return render(req, 'shopping_cart.html', {'shopping_carts': shopping_carts})
+
 class ArticleDetailView(DetailView):
 
     model = Printer
@@ -56,8 +64,13 @@ class ArticleDetailView(DetailView):
 
 class ShoppingCartView(View):
 
-    model = Printer
+    model = ShoppingCart
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        total = 0
+        for cart in context['shopping_carts']:
+            total += cart.printer.price * cart.quantity
+
+        context['total'] = total
         return context
