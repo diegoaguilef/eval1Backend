@@ -63,7 +63,9 @@
         </div>
         {% if user is not None %}
           <a class="nav-link " href="#"><i class="fa fa- user">{{ user.name }}</i></a>
-          <a class="navbar-brand" href="{% url 'sign_out' %}"><i class="fa fa- user"></i>Logout</a>
+          <a class="navbar-brand" href="{% url 'sign_out' %}"><i class="fa fa- user"></i>Cerrar Sesion</a>
+        {% else %}
+          <a class="navbar-brand" href="{% url 'sign_in' %}"><i class="fa fa- user"></i>Iniciar Sesion</a>
         {% endif %}
       </div>
     </nav>

@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from django.db import transaction
 
 # Create your models here.
 class Printer(models.Model):
@@ -30,6 +31,9 @@ class ShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
     )
+
+    def total_price(self):
+        return self.quantity * self.printer.price
 
 
 #class Sale(models.Model):

@@ -5,21 +5,19 @@
         <div class="row">
             <div class="col-6">
                 {% if printer.image %}
-                    <p>
-                        <img src="{{ printer.image.url }}" alt="printer image"/>
-                    </p>
+                  <img src="{{ printer.image.url }}" alt="printer image" class="w-100"/>
                 {% endif %}
             </div>
             <div class="col">
                 <div class="d-flex flex-column">
                     <div class="row">
-                        <p>Name: {{ printer.name }}</p>
-                        <p>Description: {{ printer.description }}</p>
-                        <p>Brand: {{ printer.brand }}</p>
-                        <p>Serial Number: {{ printer.serial_number }}</p>
+                        <p>Nombre: {{ printer.name }}</p>
+                        <p>Descripcion: {{ printer.description }}</p>
+                        <p>Marca: {{ printer.brand }}</p>
+                        <p>Numero de serie: {{ printer.serial_number }}</p>
                         <p>Wifi: {{ printer.is_wifi }}</p>
-                        <p>Stock: {{ printer.stock }}</p>
                         <p>Price: {{ printer.price }}</p>
+                        <p id="stock_label">Stock: {{ printer.stock }}</p>
                     </div>
                 </div>
                 <p class="fs-4">Cantidad:</p>
@@ -44,6 +42,9 @@
     <script>
         $(function() {
           const stock = {{ printer.stock }}
+          if(stock == 0) {
+            $("#stock_label").addClass('badge bg-danger');
+          }
           $("#minus").click(function() {
             let quantity = $("#add_to_cart").val();
             if(quantity > 0){
@@ -68,9 +69,9 @@
             const quantity = $(this).val();
             const product_id = {{ printer.id }}
             $.get("/add_to_cart?quantity=" + quantity + "&product_id="+ product_id, function(data) {
-              window.location.href = {% url 'shoppiong_cart' %}
+              window.location.href = {% url 'shopping_cart' %}
             })
           })
         })
-        </script>
+    </script>
 {% endblock content %}
