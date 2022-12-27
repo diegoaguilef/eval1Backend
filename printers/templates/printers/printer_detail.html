@@ -43,7 +43,7 @@
         $(function() {
           const stock = {{ printer.stock }}
           if(stock == 0) {
-            $("#stock_label").addClass('badge bg-danger');
+            $("#stock_label").addClassif('badge bg-danger');
           }
           $("#minus").click(function() {
             let quantity = $("#add_to_cart").val();
@@ -68,9 +68,7 @@
           $("#add_to_cart").click(function() {
             const quantity = $(this).val();
             const product_id = {{ printer.id }}
-            $.get("/add_to_cart?quantity=" + quantity + "&product_id="+ product_id, function(data) {
-              window.location.href = {% url 'shopping_cart' %}
-            })
+            window.location.href = "/add_to_cart?quantity=" + quantity + "&product_id="+ product_id
           })
         })
     </script>

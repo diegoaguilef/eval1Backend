@@ -12,7 +12,8 @@
           rel="stylesheet"
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT"
           crossorigin="anonymous"/>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -36,37 +37,81 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'home' %}">Mis Productos</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle"
-                 href="#"
-                 role="button"
-                 data-bs-toggle="dropdown"
-                 aria-expanded="false">
-                Administración
-              </a>
-              <ul class="dropdown-menu">
-                <li>
-                  <a class="dropdown-item" href="{% url 'profile' %}">Perfil</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'printers' %}">Productos</a>
-                </li>
-                <li>
-                  <hr class="dropdown-divider" />
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'users' %}">Usuarios</a>
-                </li>
-              </ul>
-            </li>
+            {% if user.is_admin %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   href="#"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                  Administración
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'printers' %}">Productos</a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'users' %}">Usuarios</a>
+                  </li>
+                </ul>
+              </li>
+            {% endif %}
+            {% if user is not None %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   href="#"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                  <i class="fa-solid fa-basket-shopping"></i><span class="badge text-bg-success">{{ user.shoppingcart_set.all|length }}</span>
+                </a>
+                <ul class="dropdown-menu">
+                  {% for cart in user.shoppingcart_set.all %}
+                    <li>
+                      <a class="dropdown-item" href="#">{{ cart.printer.name }}</a>
+                    </li>
+                  {% endfor %}
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li class="text-center">
+                    <a class="btn btn-primary" href="{% url 'shopping_cart' %}">Ir al carro</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle"
+                   href="#"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                  {{ user.name }}
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" href="{% url 'profile' %}">Perfil</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'sales' %}">Mis compras</a>
+                  </li>
+                  <li>
+                    <hr class="dropdown-divider" />
+                  </li>
+                  <li class="text-center">
+                    <a class="btn btn-danger" href="{% url 'sign_out' %}"><i class="fa fa-user"></i>Cerrar Sesion</a>
+                  </li>
+                </ul>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'sign_in' %}">Iniciar Sesión</a>
+              </li>
+            {% endif %}
           </ul>
         </div>
-        {% if user is not None %}
-          <a class="nav-link " href="#"><i class="fa fa- user">{{ user.name }}</i></a>
-          <a class="navbar-brand" href="{% url 'sign_out' %}"><i class="fa fa- user"></i>Cerrar Sesion</a>
-        {% else %}
-          <a class="navbar-brand" href="{% url 'sign_in' %}"><i class="fa fa- user"></i>Iniciar Sesion</a>
-        {% endif %}
       </div>
     </nav>
     <div class="container">
@@ -74,8 +119,6 @@
       {% endblock content %}
     </div>
     <br />
-    <footer>
-    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
   </body>
 </html>

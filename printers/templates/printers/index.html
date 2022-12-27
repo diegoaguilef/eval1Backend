@@ -2,22 +2,24 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <a href="{% url 'new_printer' %}" class="btn btn-primary">New printer</a>
+            <div class="col-3">
+            <a href="{% url 'new_printer' %}" class="btn btn-primary">Nueva impresora</a>
+            </div>
         </div>
         <div class="row col-12">
             <table class="table table-striped table-primary">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Serial Number</th>
-                        <th>Brand</th>
-                        <th>Is Wifi</th>
-                        <th>Price</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Número de serie</th>
+                        <th>Marca</th>
+                        <th>Wifi?</th>
+                        <th>Precio</th>
                         <th>Stock</th>
-                        <th>Created At</th>
-                        <th>Actions</th>
+                        <th>Fecha Creación</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,11 +35,11 @@
                             <td>{{ printer.stock }}</td>
                             <td>{{ printer.created_at }}</td>
                             <td>
-                                <a href="/printers/{{printer.id}}" class="btn btn-sm btn-primary">Show</a>
-                                <a href="/printers/{{printer.id}}/edit" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="/printers/{{printer.id}}/destroy" 
+                                <a href="{% url 'show_printer' printer.id %}" class="btn btn-sm btn-primary">Ver</a>
+                                <a href="{% url 'edit_printer' printer.id %}" class="btn btn-sm btn-warning">Editar</a>
+                                <a href="{% url 'destroy_printer' printer.id %}" 
                                     onclick="return confirm('Are you sure you want to delete this item?');" 
-                                    class="btn btn-sm btn-danger">Destroy</a>
+                                    class="btn btn-sm btn-danger">Eliminar</a>
                             </td>
                         </tr>
                     {% endfor %}

@@ -67,7 +67,7 @@ def show(req, printer_id):
     return render(req, 'printers/show.html', context)
 
 def create(req):
-    form = PrinterForm(req.POST)
+    form = PrinterForm(req.POST, req.FILES)
     user = None
     if req.session.get('_auth_user_id'):
         user = User.objects.get(pk=req.session.get('_auth_user_id'))

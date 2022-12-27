@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from users.session import SessionStore
 from .models import User
-from .forms import SignInForm, RegisterForm, UserForm
+from .forms import ProfileForm, SignInForm, RegisterForm, UserForm
 from django.urls import reverse
 
 # Create your views here.
@@ -14,8 +14,8 @@ class SessionView(View):
     template_name = "sign_in.html"
 
     def get(self, request):
-        context = { 'form': SignInForm()}
-        print(request.session.get("_auth_user_id"))
+        user = None
+        context = { 'form': SignInForm(), 'user': user }
         if request.session.get("_auth_user_id"):
             return redirect("/printers")
 
@@ -41,9 +41,9 @@ class RegistrationView(View):
     template_name = "register.html"
 
     def get(self, request):
-        context = { 'form': RegisterForm()}
+        context = { 'form': RegisterForm(), 'user': None }
         if request.session.get("_auth_user_id"):
-            return redirect("/printers")
+            return redirect("home")
 
         return render(request, self.template_name, context)
 
@@ -51,11 +51,34 @@ class RegistrationView(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            user = User.objects.filter(email=form.cleaned_data["email"])
+            user = User.objects.get(email=form.cleaned_data['email'])
+            request.session["_auth_user_id"] = user.id
             return redirect("/printers")
         else:
             return render(request, "register.html", {"form": form})
 
+class ProfileView(View):
+    template_name = "profile.html"
+
+    def get(self, request):
+        user = None
+        if request.session.get("_auth_user_id"):
+            user = User.objects.get(id=request.session["_auth_user_id"])
+
+        context = { 'user': user, 'form': ProfileForm(instance=user) }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = None
+        if request.session.get("_auth_user_id"):
+            user = User.objects.get(id=request.session["_auth_user_id"])
+
+        form = ProfileForm(request.POST, request.FILES, instance=user)
+        if form.is_valid() and user is not None:
+            form.save()
+
+        context = { 'form': form, 'user': user, 'updated': 'ok' }
+        return render(request, self.template_name, context)
 
 def profile(request):
     user_id = request.session.get("_auth_user")
@@ -69,28 +92,38 @@ def profile(request):
         return HttpResponseRedirect('sign_in')
 
 def index(req):
+    user = None
+    if req.session.get("_auth_user_id"):
+        user = User.objects.get(id=req.session["_auth_user_id"])
+
     users = User.objects.all()
-    context = { 'users': users }
+    context = { 'users': users, 'user': user }
     return render(req, 'index.html', context)
 
 
 def new(req):
+    user = None
+    if req.session.get("_auth_user_id"):
+        user = User.objects.get(id=req.session["_auth_user_id"])
     form = UserForm()
     user = req.POST
-    return render(req, 'new.html', {'form': form})
+    return render(req, 'new.html', {'form': form, 'user': user})
 
 def edit(req, user_id):
+    user = None
+    if req.session.get("_auth_user_id"):
+        user = User.objects.get(id=req.session["_auth_user_id"])
     user = User.objects.get(pk=user_id)
     form = UserForm(instance=user)
-    return render(req, 'edit.html', {'form': form, 'id': user_id})
+    return render(req, 'edit.html', {'form': form, 'id': user_id, 'user': user})
 
 def show(req, user_id):
     user = User.objects.get(pk=user_id)
     context = { 'user': user }
-    return render(req, 'user/show.html', context)
+    return render(req, 'show.html', context)
 
 def create(req):
-    form = UserForm(req.POST)
+    form = UserForm(req.POST, req.FILES)
     if form.is_valid():
         form.save()
         return redirect('users')
@@ -108,12 +141,10 @@ def update(req, user_id):
         return render(req, 'edit.html', {'form': form, 'id': user_id})
 
 def destroy(req, user_id):
-    for user in users:
-        if user.id == user_id:
-            users.remove(user)
-
+    users = User.objects.all()
+    User.objects.get(pk=user_id).delete()
     context = { 'users': users }
-    return render(req, 'users/index.html', context)
+    return redirect('users')
 
 def sign_out(req):
     print("cerrando sesion")

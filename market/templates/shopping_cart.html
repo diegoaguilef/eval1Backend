@@ -1,63 +1,68 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h1>Mis compras</h1>
-    <div class="row">
-        <div class="col">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Descripción</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Sub Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cart in shopping_carts %}
-                    <tr>
-                        <td>
-                            {{ cart.printer.name }}
-                        </td>
-                        <td>
-                            {{ cart.printer.description }}
-                        </td>
-                        <td>
-                            <i class="fa fa-circle-minus"></i>
-                            <label class="px-2">
-                                {{ cart.quantity }}
-                            </label>
-                            <i class="fa fa-circle-plus"></i>
-                        </td>
-                        <td>
-                            {{ cart.printer.price }}
-                        </td>
-                        <td>
-                            {{ cart.total_price }}
-                        </td>
-                        <td>
-                            <a href="{% url 'remove_cart_product' cart.id %}"><i class="fa-solid fa-trash-can"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>Total :</td>
-                        <td>
-                            {{ total }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <div class="container">
+        <h1>Mis carrito de compras</h1>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Descripción</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Sub Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cart in shopping_carts %}
+                                    <tr>
+                                        <td>{{ cart.printer.name }}</td>
+                                        <td>{{ cart.printer.description }}</td>
+                                        <td>
+                                            <i class="fa fa-circle-minus"></i>
+                                            <label class="px-2">{{ cart.quantity }}</label>
+                                            <i class="fa fa-circle-plus"></i>
+                                        </td>
+                                        <td>{{ cart.printer.price }}</td>
+                                        <td>{{ cart.total_price }}</td>
+                                        <td>
+                                            <a href="{% url 'remove_cart_product' cart.id %}"><i class="fa-solid fa-trash-can"></i></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Total :</td>
+                                    <td>{{ total }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+                        <form action="{% url 'buy' %}" method="post">
+                            {% csrf_token %}
+                            {% for cart in shopping_carts %}
+                                <input type="hidden" name="shopping_cart_ids" value="{{ cart.id }}" />
+                            {% endfor %}
+                            <input type="submit"
+                                   class="btn btn-success mx-auto d-block"
+                                   value="Ir a pagar">
+                        </form>
+                        <br />
+                        <a href="{% url 'home' %}" class="btn btn-primary mx-auto d-block">Seguir comprando</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}

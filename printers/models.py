@@ -1,6 +1,9 @@
 from django.db import models
+from django.db.models import Sum
 from users.models import User
 from django.db import transaction
+from django.core.exceptions import ValidationError
+import random
 
 # Create your models here.
 class Printer(models.Model):
@@ -21,8 +24,16 @@ class Printer(models.Model):
             self.name, self.description, self.serial_number, self.brand, self.is_wifi, self.price, self.stock, self.created_at)
 
 class ShoppingCart(models.Model):
+
+    @staticmethod
+    def product_quantities(user_id, printer_id):
+        return ShoppingCart.objects.filter(
+            user_id=user_id, printer_id=printer_id
+        ).aggregate(quantities=Sum('quantity'))
+
     id = models.IntegerField(primary_key=True)
     quantity = models.IntegerField()
+    enabled = models.BooleanField(default=True)
     printer = models.ForeignKey(
         Printer,
         on_delete=models.CASCADE,
@@ -30,21 +41,22 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-    )
+    )   
 
     def total_price(self):
         return self.quantity * self.printer.price
 
+    
+class Sale(models.Model):
+    id = models.IntegerField(primary_key=True)
+    invoice = models.TextField(unique=True)
+    user = models.ForeignKey(
+        'users.User',
+        on_delete=models.CASCADE,
+        related_name='sold_items',
+    )
+    shopping_carts = models.ManyToManyField(ShoppingCart)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#class Sale(models.Model):
-#    id = models.IntegerField(primary_key=True)
-#    user = models.ForeignKey(
-#        'users.User',
-#        on_delete=models.CASCADE,
-##        related_name='sold_items',
- #   )
- #   shopping_cart = models.ForeignKey(
- #       'ShoppingCart',
- #       on_delete=models.CASCADE,
- #   )
- #   invoice = models.TextField(unique=True)
+    class Meta:
+        ordering = ['created_at']

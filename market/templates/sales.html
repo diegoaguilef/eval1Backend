@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Productos comprados</h1>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha Compra</th>
+                                <th>Total</th>
+                                <th>Factura</th>
+                                <th>Fecha de compra</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in sales %}
+                            <tr>
+                                <td>
+                                    {{ sale.id }}
+                                </td>
+                                <td>
+                                    {{ sale.shopping_cart.printer.name }}
+                                </td>
+                                <td>
+                                    {{ sale.shopping_cart.printer.description }}
+                                </td>
+                                <td>
+                                    {{ sale.shopping_cart.quantity }}
+                                </td>
+                                <td>
+                                    {{ sale.shopping_cart.total_price }}
+                                </td>
+                                <td>{{ sale.invoice }}</td>
+                                <td>{{ sale.created_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'home' %}" class="btn btn-primary mx-auto d-block">Ir a mis compras</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
